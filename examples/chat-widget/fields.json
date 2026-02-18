@@ -1,0 +1,149 @@
+{
+  "animationTime": {
+    "type": "slider",
+    "label": "Animation time:",
+    "value": 2000,
+    "min": 100,
+    "max": 10000,
+    "step": 100,
+    "group": "Animation"
+  },
+  "minEmoteSize": {
+    "type": "slider",
+    "label": "Min emote size:",
+    "value": 3,
+    "min": 1,
+    "max": 5,
+    "step": 1,
+    "group": "Animation"
+  },
+  "maxEmoteSize": {
+    "type": "slider",
+    "label": "Max emote size:",
+    "value": 6,
+    "min": 5,
+    "max": 10,
+    "step": 1,
+    "group": "Animation"
+  },
+  "maxOnExplosion": {
+    "type": "slider",
+    "label": "Max on explosion:",
+    "value": 100,
+    "min": 0,
+    "max": 100,
+    "step": 100,
+    "group": "Animation"
+  },
+  "animationIn": {
+    "type": "text",
+    "label": "Animation in:",
+    "value": "bounceIn",
+    "group": "Animation"
+  },
+  "animationOut": {
+    "type": "text",
+    "label": "Animation out:",
+    "value": "fadeOutLeft",
+    "group": "Animation"
+  },
+  "activeChat": {
+    "type": "checkbox",
+    "label": "Active chat?",
+    "value": true,
+    "group": "Chat"
+  },
+  "badgeSize": {
+    "type": "slider",
+    "label": "Badge size:",
+    "value": 14,
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "group": "Chat"
+  },
+  "avatarSize": {
+    "type": "slider",
+    "label": "Avatar size:",
+    "value": 24,
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "group": "Chat"
+  },
+  "emoteSize": {
+    "type": "slider",
+    "label": "Emote size:",
+    "value": 18,
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "group": "Chat"
+  },
+  "hideAfter": {
+    "type": "slider",
+    "label": "Hide after:",
+    "value": 4000,
+    "min": 0,
+    "max": 60000,
+    "step": 1000,
+    "group": "Chat"
+  },
+  "hideCommands": {
+    "type": "checkbox",
+    "label": "Hide commands",
+    "group": "Chat"
+  },
+  "ignore": {
+    "type": "text",
+    "label": "Ignore chatters:",
+    "value": "streamelements,nightbot,streamholics",
+    "group": "Chat"
+  },
+  "activeTts": {
+    "type": "checkbox",
+    "label": "Active?",
+    "value": true,
+    "group": "TTS"
+  },
+  "ttsVolume": {
+    "type": "slider",
+    "label": "Volume",
+    "value": 80,
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "group": "TTS"
+  },
+  "ttsLanguages": {
+    "label": "Linguas (separar por virgula)",
+    "type": "text",
+    "value": "Ines, Cristiano, Vitoria, Ricardo",
+    "group": "TTS"
+  },
+  "testChat": {
+    "type": "button",
+    "label": "💬 Testar mensagem",
+    "group": "Testes"
+  },
+  "testHighlight": {
+    "type": "button",
+    "label": "⭐ Testar highlight",
+    "group": "Testes"
+  },
+  "testAction": {
+    "type": "button",
+    "label": "🎭 Testar /me",
+    "group": "Testes"
+  },
+  "testHighlightAction": {
+    "type": "button",
+    "label": "⭐🎭 Testar highlight + /me",
+    "group": "Testes"
+  },
+  "testBadges": {
+    "type": "button",
+    "label": "🏅 Testar com badges",
+    "group": "Testes"
+  }
+}

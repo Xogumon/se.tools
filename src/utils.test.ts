@@ -22,6 +22,14 @@ import {
   camelToKebab,
   kebabToCamel,
   parseTier,
+  sleep,
+  parseHexColor,
+  relativeLuminance,
+  lumeColor,
+  splitAnimate,
+  cheerGifUrl,
+  cheerGif,
+  tts,
 } from "./utils";
 
 // ─── isset ──────────────────────────────────────────────────────────────────
@@ -306,5 +314,168 @@ describe("parseTier", () => {
 
   it("returns 0 for unknown", () => {
     expect(parseTier(999)).toBe(0);
+  });
+});
+
+// ─── sleep ──────────────────────────────────────────────────────────────────
+
+describe("sleep", () => {
+  it("resolves after the given delay", async () => {
+    const start = Date.now();
+    await sleep(50);
+    expect(Date.now() - start).toBeGreaterThanOrEqual(40);
+  });
+
+  it("resolves with undefined", async () => {
+    const result = await sleep(0);
+    expect(result).toBeUndefined();
+  });
+});
+
+// ─── parseHexColor ──────────────────────────────────────────────────────────
+
+describe("parseHexColor", () => {
+  it("parses 6-digit hex", () => {
+    expect(parseHexColor("#ff0000")).toEqual({ r: 255, g: 0, b: 0 });
+    expect(parseHexColor("#00ff00")).toEqual({ r: 0, g: 255, b: 0 });
+    expect(parseHexColor("#0000ff")).toEqual({ r: 0, g: 0, b: 255 });
+  });
+
+  it("parses 3-digit hex", () => {
+    expect(parseHexColor("#f00")).toEqual({ r: 255, g: 0, b: 0 });
+    expect(parseHexColor("#0f0")).toEqual({ r: 0, g: 255, b: 0 });
+    expect(parseHexColor("#00f")).toEqual({ r: 0, g: 0, b: 255 });
+  });
+
+  it("works without # prefix", () => {
+    expect(parseHexColor("ff8800")).toEqual({ r: 255, g: 136, b: 0 });
+  });
+
+  it("returns null for invalid input", () => {
+    expect(parseHexColor("not-a-color")).toBeNull();
+    expect(parseHexColor("#gg0000")).toBeNull();
+    expect(parseHexColor("")).toBeNull();
+  });
+});
+
+// ─── relativeLuminance ──────────────────────────────────────────────────────
+
+describe("relativeLuminance", () => {
+  it("returns 0 for black", () => {
+    expect(relativeLuminance({ r: 0, g: 0, b: 0 })).toBe(0);
+  });
+
+  it("returns 1 for white", () => {
+    expect(relativeLuminance({ r: 255, g: 255, b: 255 })).toBeCloseTo(1, 2);
+  });
+
+  it("returns intermediate value for gray", () => {
+    const lum = relativeLuminance({ r: 128, g: 128, b: 128 });
+    expect(lum).toBeGreaterThan(0);
+    expect(lum).toBeLessThan(1);
+  });
+});
+
+// ─── lumeColor ──────────────────────────────────────────────────────────────
+
+describe("lumeColor", () => {
+  it("returns 'dark' for dark colors", () => {
+    expect(lumeColor("#000000")).toBe("dark");
+    expect(lumeColor("#1a1a1a")).toBe("dark");
+  });
+
+  it("returns 'light' for light colors", () => {
+    expect(lumeColor("#ffffff")).toBe("light");
+    expect(lumeColor("#ffff00")).toBe("light");
+  });
+
+  it("inverts the result when invert=true", () => {
+    expect(lumeColor("#000000", true)).toBe("light");
+    expect(lumeColor("#ffffff", true)).toBe("dark");
+  });
+
+  it("handles 3-digit hex", () => {
+    expect(lumeColor("#000")).toBe("dark");
+    expect(lumeColor("#fff")).toBe("light");
+  });
+});
+
+// ─── splitAnimate ───────────────────────────────────────────────────────────
+
+describe("splitAnimate", () => {
+  it("returns an array of spans with one per character", () => {
+    const spans = splitAnimate("abc");
+    expect(spans).toHaveLength(3);
+    expect(spans[0]).toBeInstanceOf(HTMLSpanElement);
+    expect(spans[0].innerText).toBe("a");
+    expect(spans[1].innerText).toBe("b");
+    expect(spans[2].innerText).toBe("c");
+  });
+
+  it("applies default animation class (tada)", () => {
+    const [span] = splitAnimate("x");
+    expect(span.className).toContain("animate__tada");
+    expect(span.className).toContain("animate__animated");
+    expect(span.className).toContain("animate__infinite");
+  });
+
+  it("applies custom animation", () => {
+    const [span] = splitAnimate("x", "bounce");
+    expect(span.className).toContain("animate__bounce");
+  });
+
+  it("applies custom prefix", () => {
+    const [span] = splitAnimate("x", "tada", "custom-");
+    expect(span.className).toContain("custom-animated");
+    expect(span.className).toContain("custom-tada");
+  });
+
+  it("sets incremental animation delays", () => {
+    const spans = splitAnimate("hi");
+    expect(spans[0].style.animationDelay).toBe("0ms");
+    expect(spans[1].style.animationDelay).toBe("100ms");
+  });
+
+  it("returns empty array for empty string", () => {
+    expect(splitAnimate("")).toEqual([]);
+  });
+});
+
+// ─── cheerGifUrl / cheerGif ─────────────────────────────────────────────────
+
+describe("cheerGifUrl", () => {
+  it("returns correct URL for tier thresholds", () => {
+    expect(cheerGifUrl(1)).toContain("/cheer/dark/animated/1/1.gif");
+    expect(cheerGifUrl(100)).toContain("/animated/100/1.gif");
+    expect(cheerGifUrl(150)).toContain("/animated/100/1.gif");
+    expect(cheerGifUrl(1000)).toContain("/animated/1000/1.gif");
+    expect(cheerGifUrl(100000)).toContain("/animated/100000/1.gif");
+  });
+
+  it("supports different sizes", () => {
+    expect(cheerGifUrl(100, 2)).toContain("/100/2.gif");
+    expect(cheerGifUrl(100, 3)).toContain("/100/3.gif");
+  });
+
+  it("falls back to size 1 for invalid sizes", () => {
+    expect(cheerGifUrl(100, 5 as any)).toContain("/100/1.gif");
+  });
+});
+
+describe("cheerGif", () => {
+  it("returns an HTMLImageElement", () => {
+    const img = cheerGif(500);
+    expect(img).toBeInstanceOf(HTMLImageElement);
+    expect(img.className).toBe("cheer-gif");
+    expect(img.src).toContain("/animated/100/1.gif");
+  });
+});
+
+// ─── tts ────────────────────────────────────────────────────────────────────
+
+describe("tts", () => {
+  it("returns 0 when SE_API is not available", async () => {
+    const result = await tts({ message: "hello", voices: ["Brian"] });
+    expect(result).toBe(0);
   });
 });

@@ -48,7 +48,13 @@ npm run build  # type-check + bundle (dist/)
 
 ### No widget StreamElements (UMD)
 
-Cole o conteúdo de `dist/se-tools.umd.min.cjs` (minificado) ou `dist/se-tools.umd.cjs` no JS do seu widget. A lib se auto-registra em `window.seTools`:
+Cole o conteúdo de `dist/se-tools.umd.min.cjs` no JS do widget, ou carregue via CDN no HTML:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/xogumon/se.tools@2.0.0/dist/se-tools.umd.min.cjs"></script>
+```
+
+A lib se auto-registra em `window.seTools`:
 
 ```js
 // Disponível globalmente
@@ -88,6 +94,22 @@ src/
 ├── Queue.test.ts
 ├── ChatMessage.test.ts
 └── EventBus.test.ts
+```
+
+```
+examples/
+├── alert-widget/             # Widget de alertas (Sub, Tip, Cheer, Raid, etc.)
+│   ├── widget.js             # JavaScript do widget
+│   ├── widget.css            # Estilos (Bootstrap + Animate.css)
+│   ├── widget.html           # HTML + scripts CDN
+│   ├── fields.json           # Configurações do widget (editor SE)
+│   └── data.json             # Dados padrão do widget
+└── chat-widget/              # Widget de chat completo (TTS, emotes, etc.)
+    ├── widget.js             # JavaScript do widget
+    ├── widget.css            # Estilos (Bootstrap + Animate.css)
+    ├── widget.html           # HTML + scripts CDN
+    ├── fields.json           # Configurações do widget (editor SE)
+    └── data.json             # Dados padrão do widget
 ```
 
 ---
@@ -182,15 +204,79 @@ const cleanup = adapter.attachToSocket(ws);
 
 ```ts
 import {
-  isset, allSet, trimSpaces, createList, containsText,
+  // Checagem
+  isset, allSet, isString,
+  // Strings
+  trimSpaces, createList, containsText,
   matchesRegex, matchRegexGroups,
+  // Números
   getRandomInt, getPercentageOf,
+  // Cores
   randomHexColor, randomRGBColor, randomRGBAColor,
+  parseHexColor, relativeLuminance, lumeColor,
+  // Formatação
   formatCurrency, parseTier,
+  // Case
   camelToKebab, kebabToCamel,
+  // Ambiente
   isChrome, isOBSBrowserSource,
+  // Funções
   funcExists, callFunc,
+  // DOM / Animação
+  sleep, animateCSS, audioPlay, showImage,
 } from "se-tools";
+```
+
+#### `sleep(ms)` — Pausa assíncrona
+
+```ts
+await sleep(1000); // espera 1 segundo
+```
+
+#### `animateCSS(element, animation, prefix?)` — Helper Animate.css
+
+```ts
+// Aplica animação e retorna Promise que resolve quando termina
+await animateCSS("#myDiv", "bounceIn");
+await animateCSS(document.querySelector(".card"), "fadeOut", "animate__");
+```
+
+#### `audioPlay(url, opts?, onLoad?)` — Reprodução de áudio
+
+```ts
+// Retorna a duração em segundos
+const duration = await audioPlay("https://example.com/sound.mp3", {
+  volume: 0.5,
+  maxDuration: 10,
+});
+```
+
+#### `showImage(opts)` — Exibir imagem animada
+
+```ts
+await showImage({
+  url: "https://example.com/img.png",
+  size: "200px",
+  position: "center",       // "center" | "random"
+  duration: 3000,
+  animationIn: "zoomIn",
+  animationOut: "zoomOut",
+});
+```
+
+#### `lumeColor(hexColor, invert?)` — Contraste por luminância
+
+```ts
+lumeColor("#ffffff");        // "light"
+lumeColor("#000000");        // "dark"
+lumeColor("#ff0000", true);  // inverte: retorna a cor oposta para contraste
+```
+
+#### `parseHexColor(hex)` / `relativeLuminance(rgb)`
+
+```ts
+const rgb = parseHexColor("#ff8800"); // { r: 255, g: 136, b: 0 }
+const lum = relativeLuminance(rgb);   // 0.0 – 1.0 (WCAG 2.0)
 ```
 
 ---

@@ -1,0 +1,124 @@
+{
+  "activeFollow": {
+    "type": "checkbox",
+    "label": "Active?",
+    "value": true,
+    "group": "Follow alert"
+  },
+  "followAudioUrl": {
+    "type": "sound-input",
+    "label": "Follow audio:",
+    "group": "Follow alert"
+  },
+  "activeSub": {
+    "type": "checkbox",
+    "label": "Active?",
+    "value": true,
+    "group": "Sub alert"
+  },
+  "subAudioUrl": {
+    "type": "sound-input",
+    "label": "Sub audio:",
+    "group": "Sub alert"
+  },
+  "resubAudioUrl": {
+    "type": "sound-input",
+    "label": "Resub audio:",
+    "group": "Sub alert"
+  },
+  "giftAudioUrl": {
+    "type": "sound-input",
+    "label": "Gift audio:",
+    "group": "Sub alert"
+  },
+  "activeCheer": {
+    "type": "checkbox",
+    "label": "Active?",
+    "value": true,
+    "group": "Cheer alert"
+  },
+  "cheerAudioUrl": {
+    "type": "sound-input",
+    "label": "Cheer audio:",
+    "group": "Cheer alert"
+  },
+  "activeTip": {
+    "type": "checkbox",
+    "label": "Active?",
+    "value": true,
+    "group": "Tip alert"
+  },
+  "tipAudioUrl": {
+    "type": "sound-input",
+    "label": "Tip audio:",
+    "multiple": true,
+    "group": "Tip alert"
+  },
+  "activeRaid": {
+    "type": "checkbox",
+    "label": "Active?",
+    "value": true,
+    "group": "Raid alert"
+  },
+  "raidAudioUrl": {
+    "type": "sound-input",
+    "label": "Raid alert:",
+    "group": "Raid alert"
+  },
+  "activeTts": {
+    "type": "checkbox",
+    "label": "Active?",
+    "value": true,
+    "group": "TTS"
+  },
+  "ttsVolume": {
+    "type": "slider",
+    "label": "Volume",
+    "value": 80,
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "group": "TTS"
+  },
+  "ttsLanguages": {
+    "label": "Linguas (separar por virgula)",
+    "type": "text",
+    "value": "Ines, Cristiano, Vitoria, Ricardo",
+    "group": "TTS"
+  },
+  "testFollow": {
+    "type": "button",
+    "label": "👤 Testar Follow",
+    "group": "Testes"
+  },
+  "testSub": {
+    "type": "button",
+    "label": "⭐ Testar Sub",
+    "group": "Testes"
+  },
+  "testResub": {
+    "type": "button",
+    "label": "🔄 Testar Resub",
+    "group": "Testes"
+  },
+  "testGiftSub": {
+    "type": "button",
+    "label": "🎁 Testar GiftSub",
+    "group": "Testes"
+  },
+  "testRaid": {
+    "type": "button",
+    "label": "🏴 Testar Raid",
+    "group": "Testes"
+  },
+  "testCheer": {
+    "type": "button",
+    "label": "💎 Testar Cheer",
+    "group": "Testes"
+  },
+  "testTip": {
+    "type": "button",
+    "label": "💰 Testar Tip",
+    "group": "Testes"
+  }
+}

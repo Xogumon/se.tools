@@ -39,6 +39,8 @@ export type {
   WidgetButtonEvent,
 } from "./types";
 
+export type { AudioPlayOptions, CheerGifSize, ShowImageOptions, TTSOptions } from "./utils";
+
 // ─── Classes ────────────────────────────────────────────────────────────────
 export { ChatMessage } from "./ChatMessage";
 export { Queue } from "./Queue";
@@ -52,8 +54,12 @@ export { SE_EVENTS, NON_SKIPPABLE_LISTENERS } from "./events";
 // ─── Utils (funções puras, tree-shakeable) ──────────────────────────────────
 export {
   allSet,
+  animateCSS,
+  audioPlay,
   callFunc,
   camelToKebab,
+  cheerGif,
+  cheerGifUrl,
   containsText,
   createList,
   divisibleBy,
@@ -70,24 +76,33 @@ export {
   isset,
   isWholeNumber,
   kebabToCamel,
+  lumeColor,
   matchRegexGroups,
   matchesRegex,
   nextIterator,
+  parseHexColor,
   parseTier,
   randomHexColor,
   randomRGB,
   randomRGBAColor,
   randomRGBColor,
+  relativeLuminance,
   resolves,
+  showImage,
+  sleep,
+  splitAnimate,
   trimSpaces,
+  tts,
 } from "./utils";
 
 // ─── Compatibilidade: auto-attach ao window ────────────────────────────────
+import { ChatMessage as ChatMessageClass } from "./ChatMessage";
 import { EventBus } from "./EventBus";
 import { Queue } from "./Queue";
 import * as utils from "./utils";
 
 export interface SeTools {
+  ChatMessage: typeof ChatMessageClass;
   event: EventBus;
   Queue: typeof Queue;
   utils: typeof utils;
@@ -105,6 +120,7 @@ export function createSeTools(options?: {
   eventTarget?: EventTarget;
 }): SeTools {
   const tools: SeTools = {
+    ChatMessage: ChatMessageClass,
     event: new EventBus({ eventTarget: options?.eventTarget }),
     Queue,
     utils,

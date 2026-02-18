@@ -218,3 +218,112 @@ describe("ChatMessage", () => {
     expect(msg.displayColor).toBe("#ABCDEF");
   });
 });
+
+// ─── ChatMessage.createTest ─────────────────────────────────────────────────
+
+describe("ChatMessage.createTest", () => {
+  it("creates a valid ChatMessage with minimal options", () => {
+    const msg = ChatMessage.createTest({ text: "Hello!" });
+    expect(msg).toBeInstanceOf(ChatMessage);
+    expect(msg.text).toBe("Hello!");
+    expect(msg.username).toBe("TestUser");
+    expect(msg.displayColor).toBe("#9146FF");
+    expect(msg.highlighted).toBe(false);
+    expect(msg.isAction).toBe(false);
+  });
+
+  it("creates a highlighted message", () => {
+    const msg = ChatMessage.createTest({ text: "KEKW", highlighted: true });
+    expect(msg.highlighted).toBe(true);
+    expect(msg.isHighlight).toBe(true);
+    expect(msg.raw.data.tags["msg-id"]).toBe("highlighted-message");
+  });
+
+  it("creates a non-highlighted message", () => {
+    const msg = ChatMessage.createTest({ text: "normal" });
+    expect(msg.highlighted).toBe(false);
+    expect(msg.raw.data.tags["msg-id"]).toBe("");
+  });
+
+  it("creates an action message (/me)", () => {
+    const msg = ChatMessage.createTest({ text: "is testing", isAction: true });
+    expect(msg.isAction).toBe(true);
+  });
+
+  it("accepts custom username and color", () => {
+    const msg = ChatMessage.createTest({
+      text: "oi",
+      username: "Ronis",
+      color: "#FF00FF",
+    });
+    expect(msg.username).toBe("Ronis");
+    expect(msg.displayColor).toBe("#FF00FF");
+  });
+
+  it("generates unique msgId by default", () => {
+    const a = ChatMessage.createTest({ text: "a" });
+    const b = ChatMessage.createTest({ text: "b" });
+    expect(a.msgId).not.toBe(b.msgId);
+    expect(a.msgId).toMatch(/^test-/);
+  });
+
+  it("accepts custom msgId", () => {
+    const msg = ChatMessage.createTest({ text: "x", msgId: "custom-123" });
+    expect(msg.msgId).toBe("custom-123");
+  });
+
+  it("creates message with badges", () => {
+    const msg = ChatMessage.createTest({
+      text: "hi",
+      badges: [
+        { type: "subscriber", version: "12", url: "", description: "12-Month Sub" },
+        { type: "moderator", version: "1", url: "", description: "Mod" },
+      ],
+    });
+    expect(msg.isSubscriber).toBe(true);
+    expect(msg.isModerator).toBe(true);
+    expect(msg.badges).toHaveLength(2);
+  });
+
+  it("sets subscriber and mod tags from badges", () => {
+    const msg = ChatMessage.createTest({
+      text: "hi",
+      badges: [{ type: "moderator", version: "1", url: "", description: "" }],
+    });
+    expect(msg.raw.data.tags.mod).toBe("1");
+    expect(msg.raw.data.tags.subscriber).toBe("0");
+  });
+
+  it("creates highlighted + action combined", () => {
+    const msg = ChatMessage.createTest({
+      text: "combo test",
+      highlighted: true,
+      isAction: true,
+    });
+    expect(msg.highlighted).toBe(true);
+    expect(msg.isAction).toBe(true);
+  });
+
+  it("uses text as renderedText by default", () => {
+    const msg = ChatMessage.createTest({ text: "raw text" });
+    expect(msg.renderedText).toBe("raw text");
+  });
+
+  it("accepts custom renderedText", () => {
+    const msg = ChatMessage.createTest({
+      text: "Kappa",
+      renderedText: '<img class="emote" src="kappa.png" /> Kappa',
+    });
+    expect(msg.renderedText).toContain("<img");
+    expect(msg.text).toBe("Kappa");
+  });
+
+  it("accepts custom reward ID", () => {
+    const msg = ChatMessage.createTest({
+      text: "reward",
+      customRewardId: "abc-123",
+    });
+    expect(msg.isCustomReward).toBe(true);
+    expect(msg.customRewardId).toBe("abc-123");
+  });
+});

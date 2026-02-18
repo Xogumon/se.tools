@@ -237,4 +237,128 @@ export class ChatMessage {
   usernameContainsRegex(regex: RegExp): boolean {
     return matchesRegex(this.username, regex);
   }
+
+  // ─── Factory: evento de teste ───────────────────────────────────────────
+
+  /**
+   * Opções para gerar uma mensagem de teste.
+   *
+   * Apenas `text` é obrigatório — tudo mais tem defaults coerentes.
+   */
+  static readonly TEST_DEFAULTS = {
+    username: "TestUser",
+    userId: "12345678",
+    color: "#9146FF",
+    channel: "testchannel",
+  } as const;
+
+  /**
+   * Cria uma `ChatMessage` pronta para teste, simulando um evento real do SE.
+   *
+   * @example
+   * ```js
+   * // Mensagem normal
+   * const msg = ChatMessage.createTest({ text: "Olá mundo!" });
+   * onMessage(msg);
+   *
+   * // Highlighted (aciona TTS em widgets que escutam highlight)
+   * const hi = ChatMessage.createTest({ text: "KEKW", highlighted: true });
+   * onMessage(hi);
+   *
+   * // Com badges + action
+   * const sub = ChatMessage.createTest({
+   *   text: "subscribed!",
+   *   username: "BigFan",
+   *   isAction: true,
+   *   badges: [{ type: "subscriber", version: "12", url: "", description: "12-Month Sub" }],
+   * });
+   * ```
+   */
+  static createTest(opts: {
+    /** Texto da mensagem. */
+    text: string;
+    /** Nome de exibição. @default "TestUser" */
+    username?: string;
+    /** ID do usuário. @default "12345678" */
+    userId?: string;
+    /** Cor do nome no chat (hex). @default "#9146FF" */
+    color?: string;
+    /** Canal de origem. @default "testchannel" */
+    channel?: string;
+    /** Mensagem highlighted. @default false */
+    highlighted?: boolean;
+    /** Mensagem é /me (ação). @default false */
+    isAction?: boolean;
+    /** Badges do usuário. @default [] */
+    badges?: Array<{ type: string; version: string; url: string; description: string }>;
+    /** Emotes na mensagem. @default [] */
+    emotes?: Array<{ type: string; name: string; id: string; gif: boolean; urls: Record<string, string>; start: number; end: number }>;
+    /** Rendered text (HTML). Se omitido, usa `text`. */
+    renderedText?: string;
+    /** ID da mensagem. @default gerado automaticamente */
+    msgId?: string;
+    /** Custom reward ID (Channel Points). @default "" */
+    customRewardId?: string;
+    /** Tags extras do IRC a mesclar. */
+    tags?: Record<string, string>;
+  }): ChatMessage {
+    const d = ChatMessage.TEST_DEFAULTS;
+    const {
+      text,
+      username = d.username,
+      userId = d.userId,
+      color = d.color,
+      channel = d.channel,
+      highlighted = false,
+      isAction = false,
+      badges = [],
+      emotes = [],
+      renderedText = text,
+      msgId = `test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      customRewardId = "",
+      tags = {},
+    } = opts;
+
+    const nick = username.toLowerCase();
+
+    const event: SEMessageEvent = {
+      service: "twitch",
+      renderedText,
+      data: {
+        time: Date.now(),
+        tags: {
+          "badge-info": "",
+          badges: badges.map((b) => `${b.type}/${b.version}`).join(","),
+          "client-nonce": "",
+          color,
+          "display-name": username,
+          emotes: "",
+          flags: "",
+          id: msgId,
+          mod: badges.some((b) => b.type === "moderator") ? "1" : "0",
+          "room-id": "000000",
+          subscriber: badges.some((b) => b.type === "subscriber") ? "1" : "0",
+          "tmi-sent-ts": Date.now(),
+          turbo: "0",
+          "user-id": userId,
+          "user-type": "",
+          "msg-id": highlighted ? "highlighted-message" : "",
+          "custom-reward-id": customRewardId,
+          ...tags,
+        },
+        nick,
+        userId,
+        displayName: username,
+        displayColor: color,
+        badges,
+        channel,
+        text,
+        isAction,
+        emotes,
+        msgId,
+      },
+    };
+
+    return new ChatMessage(event);
+  }
 }
